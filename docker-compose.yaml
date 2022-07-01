@@ -2,7 +2,6 @@ version: '3'
 services:
   mongo:
     image: mongo
-    restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: indexer
       MONGO_INITDB_ROOT_PASSWORD: indexer
@@ -14,7 +13,6 @@ services:
 
   mongo-express:
     image: mongo-express
-    restart: always
     ports:
       - 8081:8081
     environment:
