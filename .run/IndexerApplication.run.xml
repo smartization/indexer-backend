@@ -2,6 +2,13 @@
     <configuration default="false" name="IndexerApplication" type="SpringBootApplicationConfigurationType"
                    factoryName="Spring Boot">
         <option name="ACTIVE_PROFILES" value="dev"/>
+        <envs>
+            <env name="DB_HOST" value="localhost"/>
+            <env name="DB_PORT" value="27017"/>
+            <env name="DB_USERNAME" value="indexer"/>
+            <env name="DB_PASSWORD" value="indexer"/>
+            <env name="DB_DATABASE" value="indexer"/>
+        </envs>
         <module name="indexer"/>
         <option name="SPRING_BOOT_MAIN_CLASS" value="cloud.ptl.indexer.IndexerApplication"/>
         <method v="2">

@@ -1,5 +1,16 @@
 version: '3'
 services:
+  app:
+    image: indexer-backend
+    environment:
+      DB_HOST: mongo
+      DB_USERNAME: indexer
+      DB_PASSWORD: indexer
+      DB_DATABASE: indexer
+      DB_PORT: 27017
+    ports:
+      - 8080:8080
+
   mongo:
     image: mongo
     environment:

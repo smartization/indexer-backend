@@ -2,6 +2,7 @@ package cloud.ptl.indexer.api.item;
 
 import cloud.ptl.indexer.model.ItemEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,8 +27,14 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ItemDTO getById(@PathVariable(name = "id") Long id) {
+    public ItemDTO getById(@PathVariable(name = "id") String id) {
         ItemEntity item = itemService.getItem(id);
         return ItemDTO.of(item);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void delete(@PathVariable("id") String id) {
+        itemService.deleteItem(id);
     }
 }
