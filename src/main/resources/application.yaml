@@ -10,6 +10,10 @@ spring:
 server:
   servlet:
     context-path: /api
+  error:
+    include-binding-errors: never
+    include-stacktrace: never
+    include-exception: false
 logging:
   level:
     root: info
