@@ -2,11 +2,11 @@ spring:
   data:
     mongodb:
       authentication-database: admin
-      host: localhost
-      port: 27017
-      username: indexer
-      password: indexer
-      database: indexer
+      host: ${DB_HOST:localhost}
+      port: ${DB_PORT:27017}
+      username: ${DB_USERNAME:indexer}
+      password: ${DB_PASSWORD:indexer}
+      database: ${DB_DATABASE:indexer}
 server:
   servlet:
     context-path: /api
