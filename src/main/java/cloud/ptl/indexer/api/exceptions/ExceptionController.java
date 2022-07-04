@@ -36,6 +36,18 @@ public class ExceptionController {
                 .build();
     }
 
+    @ExceptionHandler(NumberFormatException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handler(HttpServletRequest request, NumberFormatException ex) {
+        return ErrorResponse.builder()
+                .timestamp(new Date().getTime())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message("Number inconvertible " + ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+    }
+
     @Data
     @Builder
     public static class ErrorResponse {
