@@ -4,6 +4,7 @@ import cloud.ptl.indexer.model.ItemEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -13,7 +14,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping(value = "/")
-    public ItemDTO post(ItemDTO itemDTO) {
+    public ItemDTO post(@Valid ItemDTO itemDTO) {
         ItemEntity itemEntity = itemService.createItem(itemDTO);
         return ItemDTO.of(itemEntity);
     }
