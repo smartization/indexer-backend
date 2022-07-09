@@ -32,14 +32,19 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           
-      - name: set release date
-        run: |
-          echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${TIME}
+      - name: Get Time
+        id: time
+        uses: nanzm/get-time-action@v1.1
+        with:
+          timeZone: 8
+          format: 'YYYY-MM-DD-HH-mm-ss'
 
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        env:
+          TIME: ${{ steps.time.outputs.time }}
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}-${TIME}
+          tags: ${{ steps.time.outputs.time }}
           labels: ${{ steps.meta.outputs.labels }}
