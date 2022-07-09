@@ -36,7 +36,7 @@ jobs:
         id: time
         uses: nanzm/get-time-action@v1.1
         with:
-          timeZone: 8
+          timeZone: 2
           format: 'YYYY-MM-DD-HH-mm-ss'
 
       - name: Build and push Docker image
