@@ -1,32 +1,31 @@
 package cloud.ptl.indexer.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;
 import java.util.Date;
 
-@Document
+@Entity
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemEntity {
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
     private String name;
     private String description;
     private String barcode;
     @Enumerated(EnumType.STRING)
     private BarcodeType barcodeType;
+    @ManyToOne
+    private PlaceEntity storagePlace;
     @CreatedDate
     private Date dateAdded;
     @LastModifiedDate
