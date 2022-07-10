@@ -19,7 +19,11 @@ public class ItemService {
         return itemRepository.save(entity);
     }
 
-    public ItemEntity getItem(String id) {
+    public ItemEntity save(ItemEntity item) {
+        return itemRepository.save(item);
+    }
+
+    public ItemEntity getItem(Long id) {
         return itemRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found"));
     }
@@ -28,7 +32,7 @@ public class ItemService {
         return (List<ItemEntity>) itemRepository.findAll();
     }
 
-    public void deleteItem(String id) {
+    public void deleteItem(Long id) {
         itemRepository.deleteById(id);
     }
 }

@@ -27,14 +27,14 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ItemDTO getById(@PathVariable(name = "id") String id) {
+    public ItemDTO getById(@PathVariable(name = "id") Long id) {
         ItemEntity item = itemService.getItem(id);
         return ItemDTO.of(item);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable("id") String id) {
+    public void delete(@PathVariable("id") Long id) {
         itemService.deleteItem(id);
     }
 }
