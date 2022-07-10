@@ -17,4 +17,6 @@ server:
 logging:
   level:
     root: info
+serpapi:
+  key1: ${SERP_KEY1}
 

@@ -8,6 +8,7 @@
             <env name="DB_USERNAME" value="indexer"/>
             <env name="DB_PASSWORD" value="indexer"/>
             <env name="DB_DATABASE" value="indexer"/>
+            <env name="SERP_KEY1" value="236e120cbc0ce2bfec079ab72728c764be79b316a4c31019ce5a1fb4273d8551"/>
         </envs>
         <module name="indexer"/>
         <option name="SPRING_BOOT_MAIN_CLASS" value="cloud.ptl.indexer.IndexerApplication"/>
