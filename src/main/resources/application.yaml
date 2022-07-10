@@ -1,12 +1,12 @@
 spring:
-  data:
-    mongodb:
-      authentication-database: admin
-      host: ${DB_HOST:localhost}
-      port: ${DB_PORT:27017}
-      username: ${DB_USERNAME:indexer}
-      password: ${DB_PASSWORD:indexer}
-      database: ${DB_DATABASE:indexer}
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_DATABASE:indexer}
+    username: ${DB_USERNAME:indexer}
+    password: ${DB_PASSWORD:indexer}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
 server:
   servlet:
     context-path: /api
