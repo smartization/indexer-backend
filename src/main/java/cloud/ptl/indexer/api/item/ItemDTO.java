@@ -7,11 +7,13 @@ import cloud.ptl.indexer.model.BarcodeType;
 import cloud.ptl.indexer.model.ItemEntity;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
+@Slf4j
 @Builder
 @BarcodeFormat
 @BarcodeLength
@@ -44,13 +46,17 @@ public class ItemDTO {
     }
 
     public ItemEntity toEntity() {
-        return ItemEntity.builder()
+        ItemEntity entity = ItemEntity.builder()
                 .id(id)
                 .barcode(barcode)
                 .description(description)
                 .name(name)
                 .barcodeType(barcodeType)
-                .storagePlace(storagePlace.toEntity())
                 .build();
+        if(storagePlace != null){
+            log.info("adding place to " + this);
+            entity.setStoragePlace(storagePlace.toEntity());
+        }
+        return entity;
     }
 }
