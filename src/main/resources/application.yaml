@@ -19,4 +19,8 @@ logging:
     root: info
 serpapi:
   key1: ${SERP_KEY1}
+cache:
+  barcode:
+    override: true
+    ttl: 30d
 
