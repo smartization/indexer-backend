@@ -5,11 +5,14 @@ import cloud.ptl.indexer.api.item.validators.BarcodeLength;
 import cloud.ptl.indexer.api.place.PlaceDTO;
 import cloud.ptl.indexer.model.BarcodeType;
 import cloud.ptl.indexer.model.ItemEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -25,7 +28,9 @@ public class ItemDTO {
     private String barcode;
     private BarcodeType barcodeType;
     private PlaceDTO storagePlace;
-
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dueDate;
     public static ItemDTO of(ItemEntity item) {
         ItemDTO dto = ItemDTO.builder()
                 .id(item.getId())
@@ -33,6 +38,7 @@ public class ItemDTO {
                 .description(item.getDescription())
                 .name(item.getName())
                 .barcodeType(item.getBarcodeType())
+                .dueDate(item.getDueDate())
                 .build();
         // there could be items with no storage location set already
         if (item.getStoragePlace() != null) {
@@ -52,6 +58,7 @@ public class ItemDTO {
                 .description(description)
                 .name(name)
                 .barcodeType(barcodeType)
+                .dueDate(dueDate)
                 .build();
         if(storagePlace != null){
             log.info("adding place to " + this);
