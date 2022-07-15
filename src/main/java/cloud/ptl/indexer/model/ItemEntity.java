@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -30,4 +31,5 @@ public class ItemEntity {
     private Date dateAdded;
     @LastModifiedDate
     private Date lastModifiedDate;
+    private LocalDate dueDate;
 }
