@@ -18,9 +18,12 @@ logging:
   level:
     root: info
 serpapi:
-  key1: ${SERP_KEY1}
+  key1: ${SERP_KEY1:empty_placeholder}
 cache:
   barcode:
     override: true
     ttl: 30d
+springdoc:
+  swagger-ui:
+    path: "/docs"
 
