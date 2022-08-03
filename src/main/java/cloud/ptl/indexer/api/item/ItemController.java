@@ -39,7 +39,7 @@ public class ItemController {
             summary = "Returns single entity pointed by it id"
     )
     public ItemDTO getById(
-            @Parameter(name = "item id to resolve") @PathVariable(name = "id") Long id
+            @Parameter(description = "item id to resolve") @PathVariable(name = "id") Long id
     ) {
         ItemEntity item = itemService.getItem(id);
         return ItemDTO.of(item);
@@ -51,7 +51,7 @@ public class ItemController {
             summary = "Delete single item pointed by its id"
     )
     public void delete(
-            @Parameter(name = "item id to be deleted") @PathVariable("id") Long id) {
+            @Parameter(description = "item description") @PathVariable("id") Long id) {
         itemService.deleteItem(id);
     }
 }
