@@ -2,14 +2,18 @@ package cloud.ptl.indexer.api.place;
 
 import cloud.ptl.indexer.model.PlaceEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PlaceDTO {
     @Schema(
             description = "Internal place identifier",
