@@ -7,8 +7,10 @@ import cloud.ptl.indexer.model.BarcodeType;
 import cloud.ptl.indexer.model.ItemEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -19,6 +21,8 @@ import java.util.List;
 @Data
 @Slf4j
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @BarcodeFormat
 @BarcodeLength
 public class ItemDTO {
