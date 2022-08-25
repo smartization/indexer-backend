@@ -28,7 +28,7 @@ public class PlaceController {
     @Operation(
             summary = "Add one place"
     )
-    public PlaceDTO post(@Valid PlaceDTO placeDTO) {
+    public PlaceDTO post(@Valid @RequestBody PlaceDTO placeDTO) {
         PlaceEntity entity = placeService.createPlace(placeDTO);
         return PlaceDTO.of(entity);
     }
