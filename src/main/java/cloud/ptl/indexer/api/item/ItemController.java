@@ -54,4 +54,14 @@ public class ItemController {
             @Parameter(description = "item description") @PathVariable("id") Long id) {
         itemService.deleteItem(id);
     }
+
+    @PutMapping("/{id}")
+    @Operation(
+            summary = "Update single item"
+    )
+    public ItemDTO put(
+            @Valid @RequestBody ItemDTO itemDTO) {
+        ItemEntity itemEntity = itemService.updateItem(itemDTO);
+        return ItemDTO.of(itemEntity);
+    }
 }
