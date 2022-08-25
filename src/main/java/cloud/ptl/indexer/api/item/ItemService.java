@@ -35,4 +35,8 @@ public class ItemService {
     public void deleteItem(Long id) {
         itemRepository.deleteById(id);
     }
+
+    public ItemEntity updateItem(ItemDTO itemDTO) {
+        return save(itemDTO.toEntity());
+    }
 }
