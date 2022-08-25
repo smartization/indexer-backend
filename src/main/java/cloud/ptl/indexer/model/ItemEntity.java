@@ -32,4 +32,15 @@ public class ItemEntity {
     @LastModifiedDate
     private Date lastModifiedDate;
     private LocalDate dueDate;
+
+    public String stringRepresentationWithDueDate(){
+        String itemDescription = this.getName();
+        if(this.getStoragePlace() != null){
+            itemDescription += " stored in " + this.getStoragePlace();
+        }
+        itemDescription += " with due date: " + this.getDueDate();
+        return itemDescription;
+    }
+
 }
+

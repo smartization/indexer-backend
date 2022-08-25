@@ -37,4 +37,21 @@ public class ItemController {
     public void delete(@PathVariable("id") Long id) {
         itemService.deleteItem(id);
     }
+
+    @GetMapping("/expired")
+    public List<ItemDTO> getAllExpiredProducts() throws Exception {
+        List<ItemEntity> entities = itemService.getAllExpiredProducts();
+        return entities.stream().map(ItemDTO::of).toList();
+    }
+
+    @GetMapping("/email")
+    public void sendEmailWithExpiredProducts() throws Exception {
+        itemService.getAllExpiredProductsSendMail();
+    }
+
+    @GetMapping("/soon-expired/{daysNum}")
+    public List<ItemDTO> getAllSoonExpiredProducts(@PathVariable("daysNum") int daysNum) throws Exception {
+        List<ItemEntity> entities = itemService.getAllSoonExpiredProducts(daysNum);
+        return entities.stream().map(ItemDTO::of).toList();
+    }
 }

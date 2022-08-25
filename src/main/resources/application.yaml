@@ -23,4 +23,16 @@ cache:
   barcode:
     override: true
     ttl: 30d
+mail:
+  address: ${MAIL_ADDRESS}
+  alias: "indexer"
+  password: ${MAIL_PASSWORD}
+  smtp:
+    auth: true
+    host: ${MAIL_HOST}
+    default-host: "smtp.gmail.com"
+    port: 587
+    starttls:
+      enable: true
+
 
