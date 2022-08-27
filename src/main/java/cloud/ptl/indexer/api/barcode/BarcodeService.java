@@ -25,7 +25,7 @@ import java.util.Optional;
 @Slf4j
 public class BarcodeService {
     private final BarcodeRepository barcodeRepository;
-    @Value("${serp.key1}")
+    @Value("${serpapi.key1}")
     private String serpKey1;
     @Value("${cache.barcode.override}")
     private boolean shouldOverride;
