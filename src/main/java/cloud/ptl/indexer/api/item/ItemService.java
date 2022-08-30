@@ -39,4 +39,8 @@ public class ItemService {
     public ItemEntity updateItem(ItemDTO itemDTO) {
         return save(itemDTO.toEntity());
     }
+
+    public List<ItemEntity> getItemsOnPlace(Long placeId) {
+        return itemRepository.findAllByStoragePlace_Id(placeId);
+    }
 }
