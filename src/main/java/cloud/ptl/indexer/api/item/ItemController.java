@@ -64,4 +64,15 @@ public class ItemController {
         ItemEntity itemEntity = itemService.updateItem(itemDTO);
         return ItemDTO.of(itemEntity);
     }
+
+    @GetMapping("/onPlace/{placeId}")
+    @Operation(
+            summary = "Returns all items on place"
+    )
+    public List<ItemDTO> getItemsOnPlace(
+            @Parameter(description = "place id to resolve") @PathVariable(name = "placeId") Long placeId
+    ) {
+        List<ItemEntity> entities = itemService.getItemsOnPlace(placeId);
+        return entities.stream().map(ItemDTO::of).toList();
+    }
 }
