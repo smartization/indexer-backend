@@ -33,4 +33,12 @@ public class ItemEntity {
     @LastModifiedDate
     private Timestamp lastModifiedDate;
     private LocalDate dueDate;
+
+    public Integer incrementQuantity() {
+        return ++this.quantity;
+    }
+
+    public Integer decrementQuantity() {
+        return --this.quantity;
+    }
 }
