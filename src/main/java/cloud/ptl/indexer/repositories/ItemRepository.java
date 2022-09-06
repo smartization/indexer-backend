@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ItemRepository extends CrudRepository<ItemEntity, Long> {
     List<ItemEntity> findAllByStoragePlace_Id(Long placeId);
+    Long countByStoragePlace_Id(Long placeId);
 }
