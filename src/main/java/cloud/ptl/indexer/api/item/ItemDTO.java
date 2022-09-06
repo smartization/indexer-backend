@@ -39,6 +39,7 @@ public class ItemDTO {
     private String name;
     @Schema(
             description = "Item description",
+            nullable = true,
             example = "słoik nutelli"
     )
     private String description;
@@ -53,21 +54,24 @@ public class ItemDTO {
     )
     private BarcodeType barcodeType;
     @Schema(
-            description = "Location in which item is hold"
+            description = "Location in which item is hold",
+            nullable = true
     )
     private PlaceDTO storagePlace;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Schema(
             description = "Due date of item",
+            nullable = true,
             example = "2022-07-07"
     )
     private LocalDate dueDate;
     @Schema(
             description = "Quantity of items",
+            nullable = true,
             example = "1"
     )
-    private int quantity;
+    private Integer quantity;
 
     public static ItemDTO of(ItemEntity item) {
         ItemDTO dto = ItemDTO.builder()
