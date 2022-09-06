@@ -75,4 +75,26 @@ public class ItemController {
         List<ItemEntity> entities = itemService.getItemsOnPlace(placeId);
         return entities.stream().map(ItemDTO::of).toList();
     }
+
+    @Operation(
+            summary = "Add one item if possible"
+    )
+    @PatchMapping("/{id}/add/one")
+    public ItemDTO addOneItem(
+            @Parameter(description = "item id to resolve") @PathVariable(name = "id") Long id
+    ) {
+        ItemEntity item = itemService.getItem(id);
+        return ItemDTO.of(item);
+    }
+
+    @Operation(
+            summary = "Remove one item if possible"
+    )
+    @PatchMapping("/{id}/remove/one")
+    public ItemDTO removeOneItem(
+            @Parameter(description = "item id to resolve") @PathVariable(name = "id") Long id
+    ) {
+        ItemEntity item = itemService.removeOneItem(id);
+        return ItemDTO.of(item);
+    }
 }
