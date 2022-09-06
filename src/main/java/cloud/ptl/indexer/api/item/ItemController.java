@@ -75,4 +75,48 @@ public class ItemController {
         List<ItemEntity> entities = itemService.getItemsOnPlace(placeId);
         return entities.stream().map(ItemDTO::of).toList();
     }
+
+    @Operation(
+            summary = "Add one item if possible"
+    )
+    @PatchMapping("/{id}/add/one")
+    public ItemDTO addOneItem(
+            @Parameter(description = "item id to resolve") @PathVariable(name = "id") Long id
+    ) {
+        ItemEntity item = itemService.addOneItem(id);
+        return ItemDTO.of(item);
+    }
+
+    @Operation(
+            summary = "Remove one item if possible"
+    )
+    @PatchMapping("/{id}/remove/one")
+    public ItemDTO removeOneItem(
+            @Parameter(description = "item id to resolve") @PathVariable(name = "id") Long id
+    ) {
+        ItemEntity item = itemService.removeOneItem(id);
+        return ItemDTO.of(item);
+    }
+
+    @PatchMapping("/{id}/enable/quantity")
+    @Operation(
+            summary = "Enable quantity for item"
+    )
+    public ItemDTO enableItemQuantity(
+            @Parameter(description = "item id to resolve") @PathVariable(name = "id") Long id
+    ) {
+        ItemEntity item = itemService.enableItemQuantity(id);
+        return ItemDTO.of(item);
+    }
+
+    @PatchMapping("/{id}/disable/quantity")
+    @Operation(
+            summary = "Disable quantity for item"
+    )
+    public ItemDTO disableItemQuantity(
+            @Parameter(description = "item id to resolve") @PathVariable(name = "id") Long id
+    ) {
+        ItemEntity item = itemService.disableItemQuantity(id);
+        return ItemDTO.of(item);
+    }
 }

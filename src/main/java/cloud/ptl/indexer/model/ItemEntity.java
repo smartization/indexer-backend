@@ -23,7 +23,7 @@ public class ItemEntity {
     private String name;
     private String description;
     private String barcode;
-    private int quantity;
+    private Integer quantity;
     @Enumerated(EnumType.STRING)
     private BarcodeType barcodeType;
     @ManyToOne
@@ -33,4 +33,12 @@ public class ItemEntity {
     @LastModifiedDate
     private Timestamp lastModifiedDate;
     private LocalDate dueDate;
+
+    public Integer incrementQuantity() {
+        return ++this.quantity;
+    }
+
+    public Integer decrementQuantity() {
+        return --this.quantity;
+    }
 }
