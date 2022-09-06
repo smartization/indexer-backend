@@ -63,6 +63,11 @@ public class ItemDTO {
             example = "2022-07-07"
     )
     private LocalDate dueDate;
+    @Schema(
+            description = "Quantity of items",
+            example = "1"
+    )
+    private int quantity;
 
     public static ItemDTO of(ItemEntity item) {
         ItemDTO dto = ItemDTO.builder()
@@ -72,6 +77,7 @@ public class ItemDTO {
                 .name(item.getName())
                 .barcodeType(item.getBarcodeType())
                 .dueDate(item.getDueDate())
+                .quantity(item.getQuantity())
                 .build();
         // there could be items with no storage location set already
         if (item.getStoragePlace() != null) {
@@ -92,6 +98,7 @@ public class ItemDTO {
                 .name(name)
                 .barcodeType(barcodeType)
                 .dueDate(dueDate)
+                .quantity(quantity)
                 .build();
         if(storagePlace != null){
             log.info("adding place to " + this);
