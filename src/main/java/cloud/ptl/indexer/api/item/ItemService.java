@@ -46,19 +46,43 @@ public class ItemService {
 
     public ItemEntity addOneItem(Long itemId) {
         ItemEntity item = getItem(itemId);
-        item.setQuantity(item.getQuantity() + 1);
+        checkIfItemHasQuanity(item);
+        item.incrementQuantity();
         return save(item);
     }
 
     public ItemEntity removeOneItem(Long itemId) {
         ItemEntity item = getItem(itemId);
+        checkIfItemHasQuanity(item);
         if (item.getQuantity() == 0) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     String.format("Item %d has no items to remove", itemId)
             );
         }
-        item.setQuantity(item.getQuantity() - 1);
+        item.decrementQuantity();
+        return save(item);
+    }
+
+    public boolean checkIfItemHasQuanity(ItemEntity item) {
+        if (item.getQuantity() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    String.join("Item %d does not have quantity", item.getId().toString())
+            );
+        }
+        return true;
+    }
+
+    public ItemEntity enableItemQuantity(Long itemId) {
+        ItemEntity item = getItem(itemId);
+        item.setQuantity(1);
+        return save(item);
+    }
+
+    public ItemEntity disableItemQuantity(Long itemId) {
+        ItemEntity item = getItem(itemId);
+        item.setQuantity(null);
         return save(item);
     }
 }
