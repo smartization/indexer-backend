@@ -83,7 +83,7 @@ public class ItemController {
     public ItemDTO addOneItem(
             @Parameter(description = "item id to resolve") @PathVariable(name = "id") Long id
     ) {
-        ItemEntity item = itemService.getItem(id);
+        ItemEntity item = itemService.addOneItem(id);
         return ItemDTO.of(item);
     }
 
