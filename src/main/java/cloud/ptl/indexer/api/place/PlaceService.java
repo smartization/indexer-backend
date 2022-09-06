@@ -3,6 +3,7 @@ package cloud.ptl.indexer.api.place;
 import cloud.ptl.indexer.api.item.ItemService;
 import cloud.ptl.indexer.model.ItemEntity;
 import cloud.ptl.indexer.model.PlaceEntity;
+import cloud.ptl.indexer.repositories.ItemRepository;
 import cloud.ptl.indexer.repositories.PlaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PlaceService {
     private final PlaceRepository placeRepository;
+    private final ItemRepository itemRepository;
     private final ItemService itemService;
 
     public PlaceEntity createPlace(PlaceDTO placeDTO) {
@@ -60,5 +62,9 @@ public class PlaceService {
         item.setStoragePlace(null);
         itemService.save(item);
         return save(place);
+    }
+
+    public Long countItems(Long placeId) {
+        return itemRepository.countByStoragePlace_Id(placeId);
     }
 }

@@ -73,4 +73,14 @@ public class PlaceController {
         PlaceEntity entity = placeService.removeItemFromPlace(placeId, itemId);
         return PlaceDTO.of(entity);
     }
+
+    @GetMapping("/{placeId}/count")
+    @Operation(
+            summary = "Count items in given place"
+    )
+    public Long countItems(
+            @Parameter(description = "Place from which item will be counted") @PathVariable("placeId") Long placeId
+    ) {
+        return placeService.countItems(placeId);
+    }
 }
