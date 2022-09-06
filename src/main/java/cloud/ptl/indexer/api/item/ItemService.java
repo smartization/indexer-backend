@@ -68,7 +68,7 @@ public class ItemService {
         if (item.getQuantity() == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    String.join("Item %d does not have quantity", item.getId().toString())
+                    String.format("Item %d does not have quantity", item.getId())
             );
         }
         return true;
