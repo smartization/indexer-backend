@@ -1,6 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="IndexerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <option name="ACTIVE_PROFILES" value="dev" />
+    <option name="ALTERNATIVE_JRE_PATH" value="17" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <envs>
       <env name="DB_DATABASE" value="indexer" />
       <env name="DB_HOST" value="localhost" />
@@ -12,7 +14,7 @@
       <env name="SERP_KEY1" value="236e120cbc0ce2bfec079ab72728c764be79b316a4c31019ce5a1fb4273d8551" />
       <env name="MAIL_ADDRESS" value="indexer@ptl.cloud" />
     </envs>
-    <module name="indexer-backend" />
+    <module name="indexer" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="cloud.ptl.indexer.IndexerApplication" />
     <method v="2">
       <option name="Make" enabled="true" />

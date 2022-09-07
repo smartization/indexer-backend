@@ -17,8 +17,8 @@ server:
 logging:
   level:
     root: info
-serpapi:
-  key1: ${SERP_KEY1}
+serp:
+  key1: ${SERP_KEY1:ytgyiu}
 cache:
   barcode:
     override: true
@@ -34,5 +34,3 @@ mail:
     port: 587
     starttls:
       enable: true
-
-

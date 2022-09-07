@@ -31,7 +31,7 @@ public class ItemDTO {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
-    public static ItemDTO of(ItemEntity item) {
+    public static ItemDTO of(ItemEntity item){
         ItemDTO dto = ItemDTO.builder()
                 .id(item.getId())
                 .barcode(item.getBarcode())

@@ -4,45 +4,38 @@ import cloud.ptl.indexer.model.ItemEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MimeTypeUtils;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
-import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 
 @Component
 @Slf4j
 public class MailService {
     private final Properties props;
-    //    private final SpringMailConfig springMailConfig;
     @Value("${mail.password}")
     private String password;
     @Value("${mail.address}")
     private String address;
     @Value("${mail.alias}")
     private String alias;
-
+    private final TemplateEngine templateEngine;
 
     public MailService(@Value("${mail.smtp.auth}")
                        String mailSmtpAuth, @Value("${mail.smtp.starttls.enable}")
                        String mailSmtpStarttlsEnable, @Value("${mail.smtp.host}") Optional<String> mailSmtpHost,
                        @Value("${mail.smtp.default-host}") String mailSmtpDefaultHost,
                        @Value("${mail.smtp.port}")
-                       String mailSmtpPort) {
+                       String mailSmtpPort, TemplateEngine templateEngine) {
+        this.templateEngine = templateEngine;
         props = new Properties();
         props.put("mail.smtp.auth", mailSmtpAuth);
         props.put("mail.smtp.starttls.enable", mailSmtpStarttlsEnable);
-        if (mailSmtpHost.isPresent()) {
-            props.put("mail.smtp.host", mailSmtpHost.get());
-        } else {
-            props.put("mail.smtp.host", mailSmtpDefaultHost);
-        }
+        props.put("mail.smtp.host", mailSmtpHost.orElse(mailSmtpDefaultHost));
         props.put("mail.smtp.port", mailSmtpPort);
     }
 
@@ -64,9 +57,7 @@ public class MailService {
         final String[] messageContent = {""};
         Message msg = new MimeMessage(createSession());
 
-        items.forEach(item -> {
-            messageContent[0] = messageContent[0] + "\n" + item.stringRepresentationWithDueDate();
-        });
+        items.forEach(item -> messageContent[0] = messageContent[0] + "\n" + item.stringRepresentationWithDueDate());
 
         msg.setFrom(new InternetAddress(address, alias, "UTF-8"));
         msg.setSubject(title);
@@ -74,6 +65,17 @@ public class MailService {
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse("krzk426@gmail.com"));
         msg.setSentDate(new Date());
 
+        addBody(msg, items.stream().map(ItemEntity::stringRepresentationWithDueDate).toList(), title);
+
         Transport.send(msg);
+    }
+
+    private void addBody(Message msg, List<String> items, String title) throws MessagingException {
+        final Context ctx = new Context(Locale.getDefault());
+        ctx.setVariable("items", items);
+        ctx.setVariable("title", title);
+
+        final String htmlContent = templateEngine.process("mail/products-expiration.html", ctx);
+        msg.setContent(htmlContent, MimeTypeUtils.TEXT_HTML.toString());
     }
 }

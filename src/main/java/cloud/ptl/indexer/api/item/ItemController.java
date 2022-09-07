@@ -43,12 +43,6 @@ public class ItemController {
         List<ItemEntity> entities = itemService.getAllExpiredProducts();
         return entities.stream().map(ItemDTO::of).toList();
     }
-
-    @GetMapping("/email")
-    public void sendEmailWithExpiredProducts() throws Exception {
-        itemService.getAllExpiredProductsSendMail();
-    }
-
     @GetMapping("/soon-expired/{daysNum}")
     public List<ItemDTO> getAllSoonExpiredProducts(@PathVariable("daysNum") int daysNum) throws Exception {
         List<ItemEntity> entities = itemService.getAllSoonExpiredProducts(daysNum);
