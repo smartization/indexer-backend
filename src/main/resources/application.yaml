@@ -17,12 +17,16 @@ server:
 logging:
   level:
     root: info
-serp:
-  key1: ${SERP_KEY1:ytgyiu}
+serpapi:
+  key1: ${SERP_KEY1:empty_placeholder}
 cache:
   barcode:
     override: true
     ttl: 30d
+springdoc:
+  swagger-ui:
+    path: "/docs"
+
 mail:
   address: ${MAIL_ADDRESS}
   alias: "indexer"

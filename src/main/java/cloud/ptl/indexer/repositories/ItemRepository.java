@@ -9,4 +9,6 @@ import java.util.List;
 public interface ItemRepository extends CrudRepository<ItemEntity, Long> {
     List<ItemEntity> findByDueDateBefore(LocalDate now);
     List<ItemEntity> findByDueDateIsBetween(LocalDate startDate, LocalDate endDate);
+    List<ItemEntity> findAllByStoragePlace_Id(Long placeId);
+    Long countByStoragePlace_Id(Long placeId);
 }
