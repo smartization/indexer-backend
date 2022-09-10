@@ -29,7 +29,7 @@ springdoc:
 
 mail:
   address: ${MAIL_ADDRESS}
-  alias: "indexer"
+  alias: "Indexer"
   password: ${MAIL_PASSWORD}
   smtp:
     auth: true
