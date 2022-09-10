@@ -26,4 +26,8 @@ cache:
 springdoc:
   swagger-ui:
     path: "/docs"
+firebase:
+  token:
+    remove:
+      days: 3d
 
