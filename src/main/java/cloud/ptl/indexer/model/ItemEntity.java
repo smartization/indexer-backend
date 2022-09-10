@@ -34,6 +34,15 @@ public class ItemEntity {
     private Timestamp lastModifiedDate;
     private LocalDate dueDate;
 
+    public String stringRepresentationWithDueDate(){
+        String itemDescription = this.getName();
+        if(this.getStoragePlace() != null){
+            itemDescription += " stored in " + this.getStoragePlace();
+        }
+        itemDescription += " with due date: " + this.getDueDate();
+        return itemDescription;
+    }
+
     public Integer incrementQuantity() {
         return ++this.quantity;
     }
@@ -42,3 +51,4 @@ public class ItemEntity {
         return --this.quantity;
     }
 }
+

@@ -73,7 +73,7 @@ public class ItemDTO {
     )
     private Integer quantity;
 
-    public static ItemDTO of(ItemEntity item) {
+    public static ItemDTO of(ItemEntity item){
         ItemDTO dto = ItemDTO.builder()
                 .id(item.getId())
                 .barcode(item.getBarcode())
