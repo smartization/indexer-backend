@@ -1,6 +1,5 @@
 package cloud.ptl.indexer.api.item;
 
-import cloud.ptl.indexer.api.mail.MailService;
 import cloud.ptl.indexer.model.ItemEntity;
 import cloud.ptl.indexer.repositories.ItemRepository;
 import lombok.RequiredArgsConstructor;
