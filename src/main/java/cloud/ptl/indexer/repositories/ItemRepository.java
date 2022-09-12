@@ -10,5 +10,7 @@ public interface ItemRepository extends CrudRepository<ItemEntity, Long> {
     List<ItemEntity> findByDueDateBefore(LocalDate now);
     List<ItemEntity> findByDueDateIsBetween(LocalDate startDate, LocalDate endDate);
     List<ItemEntity> findAllByStoragePlace_Id(Long placeId);
+    List<ItemEntity> findAllByCategory_Id(Long categoryId);
     Long countByStoragePlace_Id(Long placeId);
+    Long countByCategory(Long categoryId);
 }
