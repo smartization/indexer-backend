@@ -1,5 +1,6 @@
 package cloud.ptl.indexer.api.item;
 
+import cloud.ptl.indexer.api.category.CategoryDTO;
 import cloud.ptl.indexer.api.item.validators.BarcodeFormat;
 import cloud.ptl.indexer.api.item.validators.BarcodeLength;
 import cloud.ptl.indexer.api.place.PlaceDTO;
@@ -72,6 +73,11 @@ public class ItemDTO {
             example = "1"
     )
     private Integer quantity;
+    @Schema(
+            description = "Category of item",
+            nullable = true
+    )
+    private CategoryDTO category;
 
     public static ItemDTO of(ItemEntity item) {
         ItemDTO dto = ItemDTO.builder()
@@ -86,6 +92,9 @@ public class ItemDTO {
         // there could be items with no storage location set already
         if (item.getStoragePlace() != null) {
             dto.setStoragePlace(PlaceDTO.of(item.getStoragePlace()));
+        }
+        if (item.getCategory() != null) {
+            dto.setCategory(CategoryDTO.of(item.getCategory()));
         }
         return dto;
     }
@@ -104,9 +113,13 @@ public class ItemDTO {
                 .dueDate(dueDate)
                 .quantity(quantity)
                 .build();
-        if(storagePlace != null){
+        if (storagePlace != null) {
             log.info("adding place to " + this);
             entity.setStoragePlace(storagePlace.toEntity());
+        }
+        if (category != null) {
+            log.info("adding category to " + this);
+            entity.setCategory(category.toEntity());
         }
         return entity;
     }

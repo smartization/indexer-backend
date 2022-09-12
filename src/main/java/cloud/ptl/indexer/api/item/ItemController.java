@@ -55,6 +55,17 @@ public class ItemController {
         itemService.deleteItem(id);
     }
 
+    @GetMapping("/expired")
+    public List<ItemDTO> getAllExpiredProducts() throws Exception {
+        List<ItemEntity> entities = itemService.getAllExpiredProducts();
+        return entities.stream().map(ItemDTO::of).toList();
+    }
+    @GetMapping("/soon-expired/{daysNum}")
+    public List<ItemDTO> getAllSoonExpiredProducts(@PathVariable("daysNum") int daysNum) throws Exception {
+        List<ItemEntity> entities = itemService.getAllSoonExpiredProducts(daysNum);
+        return entities.stream().map(ItemDTO::of).toList();
+    }
+
     @PutMapping("/{id}")
     @Operation(
             summary = "Update single item"
@@ -74,6 +85,40 @@ public class ItemController {
     ) {
         List<ItemEntity> entities = itemService.getItemsOnPlace(placeId);
         return entities.stream().map(ItemDTO::of).toList();
+    }
+
+    @GetMapping("/onCategory/{categoryId}")
+    @Operation(
+            method = "GET",
+            summary = "Returns all items on category"
+    )
+    public List<ItemDTO> getItemsOnCategory(
+            @Parameter(description = "category id to resolve") @PathVariable(name = "categoryId") Long categoryId
+    ) {
+        List<ItemEntity> entities = itemService.getAllByCategory(categoryId);
+        return entities.stream().map(ItemDTO::of).toList();
+    }
+
+    @GetMapping("/count/in/category/{categoryId}")
+    @Operation(
+            method = "GET",
+            description = "Get number of items in given category"
+    )
+    public Long countItemsInCategory(
+            @Parameter(description = "Id of category to resolve") @PathVariable(name = "categoryId") Long categoryId
+    ) {
+        return itemService.countItemsOnCategory(categoryId);
+    }
+
+    @GetMapping("/count/in/place/{placeId}")
+    @Operation(
+            method = "GET",
+            description = "Count items in given place"
+    )
+    public Long countItems(
+            @Parameter(description = "Place from which item will be counted") @PathVariable("placeId") Long placeId
+    ) {
+        return itemService.countItemsOnPlace(placeId);
     }
 
     @Operation(
@@ -118,5 +163,29 @@ public class ItemController {
     ) {
         ItemEntity item = itemService.disableItemQuantity(id);
         return ItemDTO.of(item);
+    }
+
+    @PatchMapping("/add/{itemId}/to/category/{categoryId}")
+    @Operation(
+            method = "PATCH",
+            description = "Add single item to single category"
+    )
+    @ResponseStatus(HttpStatus.OK)
+    public void addItemToCategory(
+            @Parameter(description = "Item id to resolve") @PathVariable("itemId") Long itemId,
+            @Parameter(description = "Category id to resolve") @PathVariable("categoryId") Long categoryId) {
+        itemService.addItemToCategory(itemId, categoryId);
+    }
+
+    @PatchMapping("/remove/{itemId}/from/category/{categoryId}")
+    @Operation(
+            method = "PATCH",
+            description = "Remove single item to single category"
+    )
+    @ResponseStatus(HttpStatus.OK)
+    public void removeItemFromCategory(
+            @Parameter(description = "Item id to resolve") @PathVariable("itemId") Long itemId,
+            @Parameter(description = "Category id to resolve") @PathVariable("categoryId") Long categoryId) {
+        itemService.removeItemFromCategory(itemId, categoryId);
     }
 }

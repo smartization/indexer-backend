@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en-EN">
+<head>
+    <title th:remove="all">Template for HTML email with inline image</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<h3 th:text="${title}"></h3>
+<ul th:remove="all-but-first">
+<li th:each="item : ${items}" th:text="${item}"></li>
+</ul>
+</body>
+</html>

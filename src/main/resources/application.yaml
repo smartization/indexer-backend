@@ -26,4 +26,19 @@ cache:
 springdoc:
   swagger-ui:
     path: "/docs"
+firebase:
+  token:
+    remove:
+      days: 3d
 
+mail:
+  address: ${MAIL_ADDRESS}
+  alias: "Indexer"
+  password: ${MAIL_PASSWORD}
+  smtp:
+    auth: true
+    host: ${MAIL_HOST}
+    default-host: "smtp.gmail.com"
+    port: 587
+    starttls:
+      enable: true
