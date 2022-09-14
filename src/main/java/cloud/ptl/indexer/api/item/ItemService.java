@@ -1,5 +1,7 @@
 package cloud.ptl.indexer.api.item;
 
+import cloud.ptl.indexer.api.category.CategoryService;
+import cloud.ptl.indexer.model.CategoryEntity;
 import cloud.ptl.indexer.model.ItemEntity;
 import cloud.ptl.indexer.repositories.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.List;
 @Slf4j
 public class ItemService {
     private final ItemRepository itemRepository;
+    private final CategoryService categoryService;
     public ItemEntity createItem(ItemDTO itemDTO) {
         ItemEntity entity = itemDTO.toEntity();
         return itemRepository.save(entity);
@@ -34,6 +37,10 @@ public class ItemService {
 
     public List<ItemEntity> getAll() {
         return (List<ItemEntity>) itemRepository.findAll();
+    }
+
+    public List<ItemEntity> getAllByCategory(Long categoryId) {
+        return itemRepository.findAllByCategory_Id(categoryId);
     }
 
     public void deleteItem(Long id) {
@@ -96,5 +103,36 @@ public class ItemService {
         ItemEntity item = getItem(itemId);
         item.setQuantity(null);
         return save(item);
+    }
+
+    public boolean addItemToCategory(Long itemId, Long categoryId) {
+        ItemEntity item = getItem(itemId);
+        CategoryEntity category = categoryService.findById(categoryId);
+        item.setCategory(category);
+        if (category.getItems().add(item)) {
+            categoryService.save(category);
+            save(item);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removeItemFromCategory(Long itemId, Long categoryId) {
+        ItemEntity item = getItem(itemId);
+        CategoryEntity category = categoryService.findById(categoryId);
+        if (category.getItems().remove(item)) {
+            categoryService.save(category);
+            save(item);
+            return false;
+        }
+        return true;
+    }
+
+    public Long countItemsOnPlace(Long placeId) {
+        return itemRepository.countByStoragePlace_Id(placeId);
+    }
+
+    public Long countItemsOnCategory(Long categoryId) {
+        return itemRepository.countByCategory(categoryId);
     }
 }

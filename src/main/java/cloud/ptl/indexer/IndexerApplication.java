@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         info = @Info(
                 title = "Smartization indexer API",
                 version = "1.0.0",
-                description = "API serving infromation for indexer frontend"
+                description = "API serving information for indexer frontend"
         )
 )
 public class IndexerApplication {
