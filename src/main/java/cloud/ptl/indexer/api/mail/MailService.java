@@ -4,6 +4,7 @@ import cloud.ptl.indexer.api.item.ItemService;
 import cloud.ptl.indexer.model.ItemEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeTypeUtils;
@@ -27,20 +28,19 @@ public class MailService {
     private String alias;
     private final TemplateEngine templateEngine;
     private final ItemService itemService;
-    private static final int DAYS_NUM  = 5;
-
-    final String SOON_EXPIRED_MESSAGE = "indexer - list of products which will be expired in less then";
-    final String EXPIRED_MESSAGE = "indexer - list of expired products";
-    final String DAYS = "days";
+    private final MessageSource messageSource;
+    @Value("${notification.days-num}")
+    private int days_num;
 
     public MailService(@Value("${mail.smtp.auth}")
                        String mailSmtpAuth, @Value("${mail.smtp.starttls.enable}")
                        String mailSmtpStarttlsEnable, @Value("${mail.smtp.host}") Optional<String> mailSmtpHost,
                        @Value("${mail.smtp.default-host}") String mailSmtpDefaultHost,
                        @Value("${mail.smtp.port}")
-                       String mailSmtpPort, TemplateEngine templateEngine, ItemService itemService) {
+                       String mailSmtpPort, TemplateEngine templateEngine, ItemService itemService, MessageSource messageSource) {
         this.templateEngine = templateEngine;
         this.itemService = itemService;
+        this.messageSource = messageSource;
         props = new Properties();
         props.put("mail.smtp.auth", mailSmtpAuth);
         props.put("mail.smtp.starttls.enable", mailSmtpStarttlsEnable);
@@ -50,6 +50,7 @@ public class MailService {
 
     private Session createSession() {
         return Session.getInstance(props, new javax.mail.Authenticator() {
+            @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(address, password);
             }
@@ -58,10 +59,10 @@ public class MailService {
 
     public void sendEmail(List<ItemEntity> items, String title, String receiver) throws Exception {
         if (address.isEmpty()) {
-            throw new Exception("mail address not found in configuration");
+            throw new Exception(messageSource.getMessage("error.mail.addressNotConfigured", null, Locale.getDefault()));
         }
         if (password.isEmpty()) {
-            throw new Exception("mail password not found in configuration");
+            throw new Exception(messageSource.getMessage("error.mail.passwordNotConfigured", null, Locale.getDefault()));
         }
         final String[] messageContent = {""};
         Message msg = new MimeMessage(createSession());
@@ -90,13 +91,14 @@ public class MailService {
     @Scheduled(cron = "0 30 3 * * *")
     void sendEmailWithAllExpiredProducts() throws Exception {
         List<ItemEntity> entities = itemService.getAllExpiredProducts();
-        tryToSendEmail(entities, EXPIRED_MESSAGE);
+        tryToSendEmail(entities, messageSource.getMessage("mail.expiredProductsMessage",null, Locale.getDefault()));
     }
 
     @Scheduled(cron = "0 30 3 * * *")
     void sendEmailWithAllSoonExpiredProducts() throws Exception {
-        List<ItemEntity> expiredItems = itemService.getAllSoonExpiredProducts(DAYS_NUM);
-        tryToSendEmail(expiredItems, SOON_EXPIRED_MESSAGE + " " + DAYS_NUM + " " + DAYS);
+        List<ItemEntity> expiredItems = itemService.getAllSoonExpiredProducts(days_num);
+        tryToSendEmail(expiredItems, messageSource.getMessage("mail.soonExpiredProductsMessage", new Object[]{days_num},
+                Locale.getDefault()));
     }
     public void tryToSendEmail(List<ItemEntity> entities,String mailMessage) throws Exception {
         if(!entities.isEmpty()){

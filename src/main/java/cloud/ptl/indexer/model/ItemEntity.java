@@ -33,10 +33,12 @@ public class ItemEntity {
     @LastModifiedDate
     private Timestamp lastModifiedDate;
     private LocalDate dueDate;
+    @ManyToOne
+    private CategoryEntity category;
 
-    public String stringRepresentationWithDueDate(){
+    public String stringRepresentationWithDueDate() {
         String itemDescription = this.getName();
-        if(this.getStoragePlace() != null){
+        if (this.getStoragePlace() != null) {
             itemDescription += " stored in " + this.getStoragePlace();
         }
         itemDescription += " with due date: " + this.getDueDate();
