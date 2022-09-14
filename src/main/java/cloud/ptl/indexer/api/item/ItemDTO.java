@@ -1,8 +1,6 @@
 package cloud.ptl.indexer.api.item;
 
 import cloud.ptl.indexer.api.category.CategoryDTO;
-import cloud.ptl.indexer.api.item.validators.BarcodeFormat;
-import cloud.ptl.indexer.api.item.validators.BarcodeLength;
 import cloud.ptl.indexer.api.place.PlaceDTO;
 import cloud.ptl.indexer.model.BarcodeType;
 import cloud.ptl.indexer.model.ItemEntity;
@@ -24,8 +22,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@BarcodeFormat
-@BarcodeLength
 public class ItemDTO {
     @Schema(
             description = "Internal identifier of item",
@@ -46,7 +42,8 @@ public class ItemDTO {
     private String description;
     @Schema(
             description = "Numeric or textual barcode of item",
-            example = "8000500179864"
+            example = "8000500179864",
+            nullable = true
     )
     private String barcode;
     @Schema(

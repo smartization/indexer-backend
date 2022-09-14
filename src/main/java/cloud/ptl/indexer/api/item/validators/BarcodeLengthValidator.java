@@ -11,6 +11,9 @@ public class BarcodeLengthValidator implements ConstraintValidator<BarcodeLength
     public boolean isValid(ItemDTO itemDTO, ConstraintValidatorContext constraintValidatorContext) {
         final String barcode = itemDTO.getBarcode();
         final BarcodeType barcodeType = itemDTO.getBarcodeType();
+        if (barcode == null || barcode.isBlank()) {
+            return true;
+        }
         // remove if more code types added
         //noinspection SwitchStatementWithTooFewBranches
         switch (barcodeType) {
