@@ -1,6 +1,5 @@
 package cloud.ptl.indexer.api.item;
 
-import cloud.ptl.indexer.api.mail.MailService;
 import cloud.ptl.indexer.model.ItemEntity;
 import cloud.ptl.indexer.repositories.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +47,6 @@ public class ItemService {
     public List<ItemEntity> getAllSoonExpiredProducts(int daysNum) {
         return itemRepository.findByDueDateIsBetween(LocalDate.now().minusDays(daysNum), LocalDate.now());
     }
-
 
     public ItemEntity updateItem(ItemDTO itemDTO) {
         return save(itemDTO.toEntity());

@@ -27,10 +27,12 @@ public class MailService {
     private String alias;
     private final TemplateEngine templateEngine;
     private final ItemService itemService;
-    private static final int DAYS_NUM  = 5;
+    @Value("${notification.days-num}")
+    private int DAYS_NUM;
 
     final String SOON_EXPIRED_MESSAGE = "indexer - list of products which will be expired in less then";
     final String EXPIRED_MESSAGE = "indexer - list of expired products";
+
     final String DAYS = "days";
 
     public MailService(@Value("${mail.smtp.auth}")

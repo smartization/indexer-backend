@@ -42,3 +42,6 @@ mail:
     port: 587
     starttls:
       enable: true
+
+notification:
+  days-num: 5
