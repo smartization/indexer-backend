@@ -31,7 +31,7 @@ public class FirebaseService {
     private final ItemService itemService;
     private final MessageSource messageSource;
     @Value("${notification.days-num}")
-    private int DAYS_NUM;
+    private int daysNum;
 
     public void updateToken(String oldToken, String newToken) {
         firebaseRepository.findByToken(oldToken).ifPresentOrElse(firebaseToken -> {
@@ -63,19 +63,14 @@ public class FirebaseService {
     }
 
 
-    public void sendNotificationToAll(String title, List<ItemEntity> items){
-        if(!items.isEmpty()){
+    public void sendNotificationToAll(String title, List<ItemEntity> items) {
+        if (!items.isEmpty()) {
             List<FirebaseToken> tokens = findAll();
-            tokens.forEach(token -> {
-                try {
-                    sendNotification(title, items, token.getToken());
-                } catch (FirebaseMessagingException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+            tokens.forEach(token -> sendNotification(title, items, token.getToken()));
         }
     }
-    public String sendNotification(String title, List<ItemEntity> items, String token) throws FirebaseMessagingException {
+
+    public void sendNotification(String title, List<ItemEntity> items, String token) {
 
         String content = items
                 .stream()
@@ -97,7 +92,11 @@ public class FirebaseService {
                 .setNotification(notification)
                 .build();
 
-        return firebaseMessaging.send(message);
+        try {
+            firebaseMessaging.send(message);
+        } catch (FirebaseMessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
     @Scheduled(cron = "0 30 3 * * *")
     void sendScheduledNotificationWithExpiredProducts(){
@@ -105,9 +104,10 @@ public class FirebaseService {
         sendNotificationToAll(messageSource.getMessage("firebase.notification.expiredProductsTitle", null, Locale.getDefault()), expiredItems);
     }
     @Scheduled(cron = "0 30 3 * * *")
-    void sendScheduledNotificationWithSoonExpiredProducts(){
-        List<ItemEntity> soonExpiredItems = itemService.getAllSoonExpiredProducts(DAYS_NUM);
-        sendNotificationToAll(messageSource.getMessage("firebase.notification.soonExpiredProductsTitle", new Object[] {DAYS_NUM}, Locale.getDefault()), soonExpiredItems);
+    void sendScheduledNotificationWithSoonExpiredProducts() {
+        List<ItemEntity> soonExpiredItems = itemService.getAllSoonExpiredProducts(daysNum);
+        sendNotificationToAll(messageSource.getMessage("firebase.notification.soonExpiredProductsTitle", new Object[]{
+                daysNum}, Locale.getDefault()), soonExpiredItems);
     }
 
     void sendNotificationWithExpiredProducts(){
