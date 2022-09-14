@@ -55,7 +55,6 @@ public class ItemService {
         return itemRepository.findByDueDateIsBetween(LocalDate.now().minusDays(daysNum), LocalDate.now());
     }
 
-
     public ItemEntity updateItem(ItemDTO itemDTO) {
         return save(itemDTO.toEntity());
     }

@@ -4,8 +4,8 @@ import cloud.ptl.indexer.api.item.ItemService;
 import cloud.ptl.indexer.model.ItemEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.context.MessageSource;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeTypeUtils;
 import org.thymeleaf.TemplateEngine;
@@ -28,8 +28,9 @@ public class MailService {
     private String alias;
     private final TemplateEngine templateEngine;
     private final ItemService itemService;
-    private static final int DAYS_NUM  = 5;
     private final MessageSource messageSource;
+    @Value("${notification.days-num}")
+    private int days_num;
 
     public MailService(@Value("${mail.smtp.auth}")
                        String mailSmtpAuth, @Value("${mail.smtp.starttls.enable}")
@@ -49,6 +50,7 @@ public class MailService {
 
     private Session createSession() {
         return Session.getInstance(props, new javax.mail.Authenticator() {
+            @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(address, password);
             }
@@ -94,8 +96,9 @@ public class MailService {
 
     @Scheduled(cron = "0 30 3 * * *")
     void sendEmailWithAllSoonExpiredProducts() throws Exception {
-        List<ItemEntity> expiredItems = itemService.getAllSoonExpiredProducts(DAYS_NUM);
-        tryToSendEmail(expiredItems, messageSource.getMessage("mail.soonExpiredProductsMessage",new Object[] {DAYS_NUM}, Locale.getDefault()));
+        List<ItemEntity> expiredItems = itemService.getAllSoonExpiredProducts(days_num);
+        tryToSendEmail(expiredItems, messageSource.getMessage("mail.soonExpiredProductsMessage", new Object[]{days_num},
+                Locale.getDefault()));
     }
     public void tryToSendEmail(List<ItemEntity> entities,String mailMessage) throws Exception {
         if(!entities.isEmpty()){
