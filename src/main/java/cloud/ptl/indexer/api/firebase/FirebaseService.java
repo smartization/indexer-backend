@@ -11,6 +11,7 @@ import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,7 +29,7 @@ public class FirebaseService {
     private final FirebaseRepository firebaseRepository;
     private final FirebaseMessaging firebaseMessaging;
     private final ItemService itemService;
-
+    private final MessageSource messageSource;
     @Value("${notification.days-num}")
     private int DAYS_NUM;
 
@@ -77,7 +79,10 @@ public class FirebaseService {
 
         String content = items
                 .stream()
-                .map(item -> item.getName() + " - due date: " + item.getDueDate() + "\n")
+                .map(item -> messageSource
+                        .getMessage("firebase.notification.productRepresentation",
+                                new Object[]{item.getName(), item.getDueDate()},
+                                Locale.getDefault()))
                 .collect(Collectors.joining("\n"));
 
         Notification notification = Notification
@@ -97,20 +102,20 @@ public class FirebaseService {
     @Scheduled(cron = "0 30 3 * * *")
     void sendScheduledNotificationWithExpiredProducts(){
         List<ItemEntity> expiredItems = itemService.getAllExpiredProducts();
-        sendNotificationToAll("expired products", expiredItems);
+        sendNotificationToAll(messageSource.getMessage("firebase.notification.expiredProductsTitle", null, Locale.getDefault()), expiredItems);
     }
     @Scheduled(cron = "0 30 3 * * *")
     void sendScheduledNotificationWithSoonExpiredProducts(){
         List<ItemEntity> soonExpiredItems = itemService.getAllSoonExpiredProducts(DAYS_NUM);
-        sendNotificationToAll("products expired in " + DAYS_NUM + " days: ", soonExpiredItems);
+        sendNotificationToAll(messageSource.getMessage("firebase.notification.soonExpiredProductsTitle", new Object[] {DAYS_NUM}, Locale.getDefault()), soonExpiredItems);
     }
 
     void sendNotificationWithExpiredProducts(){
         List<ItemEntity> expiredItems = itemService.getAllExpiredProducts();
-        sendNotificationToAll("expired products", expiredItems);
+        sendNotificationToAll(messageSource.getMessage("firebase.notification.expiredProductsTitle", null, Locale.getDefault()), expiredItems);
     }
     void sendNotificationWithSoonExpiredProducts(int daysNum){
         List<ItemEntity> soonExpiredItems = itemService.getAllSoonExpiredProducts(daysNum);
-        sendNotificationToAll("products expired in " + daysNum + " days: ", soonExpiredItems);
+        sendNotificationToAll(messageSource.getMessage("firebase.notification.soonExpiredProductsTitle", new Object[] {daysNum}, Locale.getDefault()), soonExpiredItems);
     }
 }
