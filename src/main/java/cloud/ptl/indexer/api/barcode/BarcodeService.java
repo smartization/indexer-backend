@@ -55,8 +55,9 @@ public class BarcodeService {
         try {
             JsonObject results = search.getJson();
             BarcodeDTO barcodeDTO = new BarcodeDTO();
-            barcodeDTO.setTitle(
-                    results.getAsJsonArray("organic_results").get(0).getAsJsonObject().get("title").getAsString());
+            String title = results.getAsJsonArray("organic_results").get(0).getAsJsonObject().get("title")
+                    .getAsString();
+            barcodeDTO.setTitle(title.substring(0, title.lastIndexOf("-") - 1));
             barcodeDTO.setValue(barcode);
             barcodeDTO.setSearchResult(results.get("search_metadata").getAsJsonObject().get("status").getAsString());
             barcodeDTO.setProcessingTime(LocalDateTime.now());
