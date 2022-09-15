@@ -36,6 +36,10 @@ public class PlaceService {
     }
 
     public void deletePlace(Long id) {
+        PlaceEntity place = getPlace(id);
+        if (!place.getItems().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Place is not empty");
+        }
         placeRepository.deleteById(id);
     }
 
