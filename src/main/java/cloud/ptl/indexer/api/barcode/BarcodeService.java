@@ -57,7 +57,8 @@ public class BarcodeService {
             BarcodeDTO barcodeDTO = new BarcodeDTO();
             String title = results.getAsJsonArray("organic_results").get(0).getAsJsonObject().get("title")
                     .getAsString();
-            barcodeDTO.setTitle(title.substring(0, title.lastIndexOf("-") - 1));
+            removeSourceNameFromTitle(title);
+            barcodeDTO.setTitle(title);
             barcodeDTO.setValue(barcode);
             barcodeDTO.setSearchResult(results.get("search_metadata").getAsJsonObject().get("status").getAsString());
             barcodeDTO.setProcessingTime(LocalDateTime.now());
@@ -72,6 +73,12 @@ public class BarcodeService {
             return barcodeDTO;
         } catch (SerpApiSearchException ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        }
+    }
+
+    private void removeSourceNameFromTitle(String title) {
+        if (title.contains("-")) {
+            title = title.substring(0, title.indexOf("-"));
         }
     }
 
