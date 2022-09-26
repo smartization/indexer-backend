@@ -54,25 +54,41 @@ public class BarcodeService {
         GoogleSearch search = new GoogleSearch(parameter);
         try {
             JsonObject results = search.getJson();
-            BarcodeDTO barcodeDTO = new BarcodeDTO();
-            String title = results.getAsJsonArray("organic_results").get(0).getAsJsonObject().get("title")
-                    .getAsString();
-            removeSourceNameFromTitle(title);
-            barcodeDTO.setTitle(title);
-            barcodeDTO.setValue(barcode);
-            barcodeDTO.setSearchResult(results.get("search_metadata").getAsJsonObject().get("status").getAsString());
-            barcodeDTO.setProcessingTime(LocalDateTime.now());
-            String stringUrl = results.getAsJsonArray("organic_results").get(0).getAsJsonObject().get("link")
-                    .getAsString();
-            try {
-                barcodeDTO.setLink(new URL(stringUrl));
-            } catch (MalformedURLException e) {
-                barcodeDTO.setLink(null);
-            }
-            addToCache(barcodeDTO);
-            return barcodeDTO;
+            checkIfResponseSuccessful(results);
+            return createBarcodeDTO(results, barcode);
         } catch (SerpApiSearchException ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        }
+    }
+
+    private void checkIfResponseSuccessful(JsonObject results) {
+        if (results.get("error") != null) {
+            log.error("SerpAPI returns searching error: {}", results.get("error").getAsString());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "SerpAPI returns error");
+        }
+    }
+
+    private BarcodeDTO createBarcodeDTO(JsonObject results, String barcode) {
+        BarcodeDTO barcodeDTO = new BarcodeDTO();
+        String title = results.getAsJsonArray("organic_results").get(0).getAsJsonObject().get("title")
+                .getAsString();
+        barcodeDTO.setTitle(title);
+        barcodeDTO.setValue(barcode);
+        barcodeDTO.setSearchResult(results.get("search_metadata").getAsJsonObject().get("status").getAsString());
+        barcodeDTO.setProcessingTime(LocalDateTime.now());
+        removeSourceNameFromTitle(title);
+        setUrl(results, barcodeDTO);
+        addToCache(barcodeDTO);
+        return barcodeDTO;
+    }
+
+    private void setUrl(JsonObject results, BarcodeDTO barcodeDTO) {
+        String stringUrl = results.getAsJsonArray("organic_results").get(0).getAsJsonObject().get("link")
+                .getAsString();
+        try {
+            barcodeDTO.setLink(new URL(stringUrl));
+        } catch (MalformedURLException e) {
+            barcodeDTO.setLink(null);
         }
     }
 
