@@ -1,15 +1,12 @@
 package cloud.ptl.indexer.api.mail;
 
-import cloud.ptl.indexer.api.item.ItemService;
-import cloud.ptl.indexer.model.ItemEntity;
+import cloud.ptl.indexer.api.mail.template.MailContent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeTypeUtils;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -26,20 +23,14 @@ public class MailService {
     private String address;
     @Value("${mail.alias}")
     private String alias;
-    private final TemplateEngine templateEngine;
-    private final ItemService itemService;
     private final MessageSource messageSource;
-    @Value("${notification.days-num}")
-    private int days_num;
 
     public MailService(@Value("${mail.smtp.auth}")
                        String mailSmtpAuth, @Value("${mail.smtp.starttls.enable}")
                        String mailSmtpStarttlsEnable, @Value("${mail.smtp.host}") Optional<String> mailSmtpHost,
                        @Value("${mail.smtp.default-host}") String mailSmtpDefaultHost,
                        @Value("${mail.smtp.port}")
-                       String mailSmtpPort, TemplateEngine templateEngine, ItemService itemService, MessageSource messageSource) {
-        this.templateEngine = templateEngine;
-        this.itemService = itemService;
+                       String mailSmtpPort, MessageSource messageSource) {
         this.messageSource = messageSource;
         props = new Properties();
         props.put("mail.smtp.auth", mailSmtpAuth);
@@ -57,7 +48,7 @@ public class MailService {
         });
     }
 
-    public void sendEmail(List<ItemEntity> items, String title, String receiver) throws Exception {
+    public void sendEmail(MailContent mailContent, String receiver) throws Exception {
         if (address.isEmpty()) {
             throw new Exception(messageSource.getMessage("error.mail.addressNotConfigured", null, Locale.getDefault()));
         }
@@ -67,43 +58,19 @@ public class MailService {
         final String[] messageContent = {""};
         Message msg = new MimeMessage(createSession());
 
-        items.forEach(item -> messageContent[0] = messageContent[0] + "\n" + item.stringRepresentationWithDueDate());
-
         msg.setFrom(new InternetAddress(address, alias, "UTF-8"));
-        msg.setSubject(title);
         msg.setContent(messageContent[0], "text/html");
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiver));
         msg.setSentDate(new Date());
+        msg.setSubject(mailContent.getSubject());
 
-        addBody(msg, items.stream().map(ItemEntity::stringRepresentationWithDueDate).toList(), title);
+        msg.setContent(mailContent.getHtmlContent(), MimeTypeUtils.TEXT_HTML.toString());
 
         Transport.send(msg);
     }
 
-    private void addBody(Message msg, List<String> items, String title) throws MessagingException {
-        final Context ctx = new Context(Locale.getDefault());
-        ctx.setVariable("items", items);
-        ctx.setVariable("title", title);
-
-        final String htmlContent = templateEngine.process("mail/products-expiration.html", ctx);
-        msg.setContent(htmlContent, MimeTypeUtils.TEXT_HTML.toString());
-    }
-    @Scheduled(cron = "0 30 3 * * *")
-    void sendEmailWithAllExpiredProducts() throws Exception {
-        List<ItemEntity> entities = itemService.getAllExpiredProducts();
-        tryToSendEmail(entities, messageSource.getMessage("mail.expiredProductsMessage",null, Locale.getDefault()));
-    }
-
-    @Scheduled(cron = "0 30 3 * * *")
-    void sendEmailWithAllSoonExpiredProducts() throws Exception {
-        List<ItemEntity> expiredItems = itemService.getAllSoonExpiredProducts(days_num);
-        tryToSendEmail(expiredItems, messageSource.getMessage("mail.soonExpiredProductsMessage", new Object[]{days_num},
-                Locale.getDefault()));
-    }
-    public void tryToSendEmail(List<ItemEntity> entities,String mailMessage) throws Exception {
-        if(!entities.isEmpty()){
-            sendEmail(entities, mailMessage, "krzk426@gmail.com");
-            sendEmail(entities, mailMessage, "piotr@ptl.cloud");
-        }
+    public void sendEmailToAllReceivers(MailContent mailContent) throws Exception {
+        sendEmail(mailContent, "krzk426@gmail.com");
+        sendEmail(mailContent, "piotr@ptl.cloud");
     }
 }
