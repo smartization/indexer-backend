@@ -35,20 +35,10 @@ public class ItemEntity {
     private LocalDate dueDate;
     @ManyToOne
     private CategoryEntity category;
-
-    public String stringRepresentationWithDueDate() {
-        String itemDescription = this.getName();
-        if (this.getStoragePlace() != null) {
-            itemDescription += " stored in " + this.getStoragePlace();
-        }
-        itemDescription += " with due date: " + this.getDueDate();
-        return itemDescription;
-    }
-
+    private Integer notifyQuantity;
     public Integer incrementQuantity() {
         return ++this.quantity;
     }
-
     public Integer decrementQuantity() {
         return --this.quantity;
     }
