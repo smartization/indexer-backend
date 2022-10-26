@@ -75,6 +75,13 @@ public class ItemDTO {
             nullable = true
     )
     private CategoryDTO category;
+    @Schema(
+            description = "the number of products at which the user will be informed about the need to buy more," +
+                    "when set to null, notifications will not be sent",
+            nullable = true,
+            example = "1"
+    )
+    private Integer notifyQuantity;
 
     public static ItemDTO of(ItemEntity item) {
         ItemDTO dto = ItemDTO.builder()
@@ -85,6 +92,7 @@ public class ItemDTO {
                 .barcodeType(item.getBarcodeType())
                 .dueDate(item.getDueDate())
                 .quantity(item.getQuantity())
+                .notifyQuantity(item.getNotifyQuantity())
                 .build();
         // there could be items with no storage location set already
         if (item.getStoragePlace() != null) {
@@ -109,6 +117,7 @@ public class ItemDTO {
                 .barcodeType(barcodeType)
                 .dueDate(dueDate)
                 .quantity(quantity)
+                .notifyQuantity(notifyQuantity)
                 .build();
         if (storagePlace != null) {
             log.info("adding place to " + this);

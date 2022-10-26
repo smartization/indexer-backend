@@ -8,12 +8,10 @@
 <h3 th:text="${title}"></h3>
 <ul th:remove="all-but-first">
 <li th:each="item : ${items}" >
-    <div>
-        <b th:text="${item.name}"></b>
-        expired
-        <b th:text="${item.days}"></b>
-        days ago
-    </div>
+    <b th:text="${item.name}"></b>
+    has low quantity:
+    <b th:text="${item.quantity}"></b> items<br>
+    <small> you asked for notification when quantity is less or equal than </small><small th:text="${item.notifyQuantity}"></small>
 </li>
 </ul>
 </body>

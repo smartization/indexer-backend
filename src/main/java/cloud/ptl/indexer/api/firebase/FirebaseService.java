@@ -1,8 +1,6 @@
 package cloud.ptl.indexer.api.firebase;
 
-import cloud.ptl.indexer.api.item.ItemService;
 import cloud.ptl.indexer.model.FirebaseToken;
-import cloud.ptl.indexer.model.ItemEntity;
 import cloud.ptl.indexer.repositories.FirebaseRepository;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
@@ -10,17 +8,12 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,10 +21,6 @@ import java.util.stream.Collectors;
 public class FirebaseService {
     private final FirebaseRepository firebaseRepository;
     private final FirebaseMessaging firebaseMessaging;
-    private final ItemService itemService;
-    private final MessageSource messageSource;
-    @Value("${notification.days-num}")
-    private int daysNum;
 
     public void updateToken(String oldToken, String newToken) {
         firebaseRepository.findByToken(oldToken).ifPresentOrElse(firebaseToken -> {
@@ -63,23 +52,14 @@ public class FirebaseService {
     }
 
 
-    public void sendNotificationToAll(String title, List<ItemEntity> items) {
-        if (!items.isEmpty()) {
+    public void sendNotificationToAll(String title, String content) {
+        if (!content.isEmpty()) {
             List<FirebaseToken> tokens = findAll();
-            tokens.forEach(token -> sendNotification(title, items, token.getToken()));
+            tokens.forEach(token -> sendNotification(title, content, token.getToken()));
         }
     }
 
-    public void sendNotification(String title, List<ItemEntity> items, String token) {
-
-        String content = items
-                .stream()
-                .map(item -> messageSource
-                        .getMessage("firebase.notification.productRepresentation",
-                                new Object[]{item.getName(), item.getDueDate()},
-                                Locale.getDefault()))
-                .collect(Collectors.joining("\n"));
-
+    public void sendNotification(String title, String content, String token) {
         Notification notification = Notification
                 .builder()
                 .setTitle(title)
@@ -97,25 +77,5 @@ public class FirebaseService {
         } catch (FirebaseMessagingException e) {
             throw new RuntimeException(e);
         }
-    }
-    @Scheduled(cron = "0 30 3 * * *")
-    void sendScheduledNotificationWithExpiredProducts(){
-        List<ItemEntity> expiredItems = itemService.getAllExpiredProducts();
-        sendNotificationToAll(messageSource.getMessage("firebase.notification.expiredProductsTitle", null, Locale.getDefault()), expiredItems);
-    }
-    @Scheduled(cron = "0 30 3 * * *")
-    void sendScheduledNotificationWithSoonExpiredProducts() {
-        List<ItemEntity> soonExpiredItems = itemService.getAllSoonExpiredProducts(daysNum);
-        sendNotificationToAll(messageSource.getMessage("firebase.notification.soonExpiredProductsTitle", new Object[]{
-                daysNum}, Locale.getDefault()), soonExpiredItems);
-    }
-
-    void sendNotificationWithExpiredProducts(){
-        List<ItemEntity> expiredItems = itemService.getAllExpiredProducts();
-        sendNotificationToAll(messageSource.getMessage("firebase.notification.expiredProductsTitle", null, Locale.getDefault()), expiredItems);
-    }
-    void sendNotificationWithSoonExpiredProducts(int daysNum){
-        List<ItemEntity> soonExpiredItems = itemService.getAllSoonExpiredProducts(daysNum);
-        sendNotificationToAll(messageSource.getMessage("firebase.notification.soonExpiredProductsTitle", new Object[] {daysNum}, Locale.getDefault()), soonExpiredItems);
     }
 }

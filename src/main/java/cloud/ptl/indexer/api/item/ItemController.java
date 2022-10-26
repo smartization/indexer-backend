@@ -138,7 +138,7 @@ public class ItemController {
     @PatchMapping("/{id}/remove/one")
     public ItemDTO removeOneItem(
             @Parameter(description = "item id to resolve") @PathVariable(name = "id") Long id
-    ) {
+    ) throws Exception {
         ItemEntity item = itemService.removeOneItem(id);
         return ItemDTO.of(item);
     }

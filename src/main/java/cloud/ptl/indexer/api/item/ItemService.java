@@ -1,11 +1,14 @@
 package cloud.ptl.indexer.api.item;
 
 import cloud.ptl.indexer.api.category.CategoryService;
+import cloud.ptl.indexer.api.notification.MediaEnum;
+import cloud.ptl.indexer.api.notification.NotificationMediator;
+import cloud.ptl.indexer.api.notification.TemplateEnum;
 import cloud.ptl.indexer.model.CategoryEntity;
 import cloud.ptl.indexer.model.ItemEntity;
 import cloud.ptl.indexer.repositories.ItemRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
@@ -14,13 +17,21 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Component
 @EnableScheduling
 @Slf4j
 public class ItemService {
     private final ItemRepository itemRepository;
     private final CategoryService categoryService;
+    private final NotificationMediator notificationMediator;
+
+    public ItemService(ItemRepository itemRepository, CategoryService categoryService, @Lazy NotificationMediator notificationMediator) {
+        this.itemRepository = itemRepository;
+        this.categoryService = categoryService;
+        this.notificationMediator = notificationMediator;
+    }
+
+
     public ItemEntity createItem(ItemDTO itemDTO) {
         ItemEntity entity = itemDTO.toEntity();
         return itemRepository.save(entity);
@@ -52,7 +63,7 @@ public class ItemService {
     }
 
     public List<ItemEntity> getAllSoonExpiredProducts(int daysNum) {
-        return itemRepository.findByDueDateIsBetween(LocalDate.now().minusDays(daysNum), LocalDate.now());
+        return itemRepository.findByDueDateIsBetween( LocalDate.now(), LocalDate.now().plusDays(daysNum));
     }
 
     public ItemEntity updateItem(ItemDTO itemDTO) {
@@ -70,7 +81,7 @@ public class ItemService {
         return save(item);
     }
 
-    public ItemEntity removeOneItem(Long itemId) {
+    public ItemEntity removeOneItem(Long itemId) throws Exception {
         ItemEntity item = getItem(itemId);
         checkIfItemHasQuanity(item);
         if (item.getQuantity() == 0) {
@@ -80,6 +91,9 @@ public class ItemService {
             );
         }
         item.decrementQuantity();
+        if(item.getNotifyQuantity() != null && item.getQuantity() <= item.getNotifyQuantity()) {
+            notificationMediator.sendNotification(TemplateEnum.QUANTITY, MediaEnum.MAIL);
+        }
         return save(item);
     }
 
@@ -134,5 +148,9 @@ public class ItemService {
 
     public Long countItemsOnCategory(Long categoryId) {
         return itemRepository.countByCategory(categoryId);
+    }
+
+    public List<ItemEntity> getAllLowQuantityProducts() {
+        return itemRepository.findByQuantityLessThanEqual();
     }
 }

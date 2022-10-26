@@ -45,3 +45,4 @@ mail:
 
 notification:
   days-num: 5
+  time: "0 54 13 * * *"
