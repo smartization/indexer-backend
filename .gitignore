@@ -33,3 +33,5 @@ build/
 
 
 .mvn/
+
+firebase-service-account.json

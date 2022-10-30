@@ -1,6 +1,5 @@
 package cloud.ptl.indexer.api.firebase;
 
-import cloud.ptl.indexer.api.firebase.FirebaseService;
 import cloud.ptl.indexer.api.firebase.template.FirebaseContent;
 import cloud.ptl.indexer.api.firebase.template.FirebaseExpiredProducts;
 import cloud.ptl.indexer.api.firebase.template.FirebaseProductsWithLowQuantity;
@@ -22,7 +21,7 @@ public class FirebaseFactory {
     public void getNotification(TemplateEnum templateEnum, HashMap params)  {
         FirebaseContent firebaseContent = chooseFirebaseContent(templateEnum, params);
         if(firebaseContent != null){
-           firebaseService.sendNotificationToAll(firebaseContent.getTitle(), firebaseContent.getContent());
+           firebaseService.sendNotificationMessageToAll(firebaseContent.getTitle(), firebaseContent.getContent());
         }
     }
 

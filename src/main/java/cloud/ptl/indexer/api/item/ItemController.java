@@ -21,7 +21,7 @@ public class ItemController {
             summary = "Post single item into indexer"
     )
     public ItemDTO post(@Valid @RequestBody ItemDTO itemDTO) {
-        ItemEntity itemEntity = itemService.createItem(itemDTO);
+        ItemEntity itemEntity = itemService.save(itemDTO);
         return ItemDTO.of(itemEntity);
     }
 
