@@ -1,6 +1,10 @@
 package cloud.ptl.indexer.api.item;
 
 import cloud.ptl.indexer.api.category.CategoryService;
+import cloud.ptl.indexer.api.item.sync.DeleteSyncCommand;
+import cloud.ptl.indexer.api.item.sync.ItemSyncEventExecutor;
+import cloud.ptl.indexer.api.item.sync.SaveSyncCommand;
+import cloud.ptl.indexer.api.item.sync.UpdateSyncCommand;
 import cloud.ptl.indexer.api.notification.MediaEnum;
 import cloud.ptl.indexer.api.notification.NotificationMediator;
 import cloud.ptl.indexer.api.notification.TemplateEnum;
@@ -24,17 +28,23 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final CategoryService categoryService;
     private final NotificationMediator notificationMediator;
+    private final ItemSyncEventExecutor itemSyncEventExecutor;
 
-    public ItemService(ItemRepository itemRepository, CategoryService categoryService, @Lazy NotificationMediator notificationMediator) {
+    public ItemService(ItemRepository itemRepository, CategoryService categoryService,
+            @Lazy NotificationMediator notificationMediator,
+            ItemSyncEventExecutor itemSyncEventExecutor) {
         this.itemRepository = itemRepository;
         this.categoryService = categoryService;
         this.notificationMediator = notificationMediator;
+        this.itemSyncEventExecutor = itemSyncEventExecutor;
     }
 
 
-    public ItemEntity createItem(ItemDTO itemDTO) {
+    public ItemEntity save(ItemDTO itemDTO) {
         ItemEntity entity = itemDTO.toEntity();
-        return itemRepository.save(entity);
+        entity = save(entity);
+        itemSyncEventExecutor.execute(new SaveSyncCommand(entity.getId()));
+        return entity;
     }
 
     public ItemEntity save(ItemEntity item) {
@@ -55,6 +65,7 @@ public class ItemService {
     }
 
     public void deleteItem(Long id) {
+        itemSyncEventExecutor.execute(new DeleteSyncCommand(id));
         itemRepository.deleteById(id);
     }
 
@@ -67,6 +78,7 @@ public class ItemService {
     }
 
     public ItemEntity updateItem(ItemDTO itemDTO) {
+        itemSyncEventExecutor.execute(new UpdateSyncCommand(itemDTO.getId()));
         return save(itemDTO.toEntity());
     }
 
@@ -91,10 +103,14 @@ public class ItemService {
             );
         }
         item.decrementQuantity();
-        if(item.getNotifyQuantity() != null && item.getQuantity() <= item.getNotifyQuantity()) {
+        tryToSendNotificationAboutLowQuantity(item);
+        return save(item);
+    }
+
+    private void tryToSendNotificationAboutLowQuantity(ItemEntity item) throws Exception {
+        if (item.getNotifyQuantity() != null && item.getQuantity() <= item.getNotifyQuantity()) {
             notificationMediator.sendNotification(TemplateEnum.QUANTITY, MediaEnum.MAIL);
         }
-        return save(item);
     }
 
     public boolean checkIfItemHasQuanity(ItemEntity item) {
