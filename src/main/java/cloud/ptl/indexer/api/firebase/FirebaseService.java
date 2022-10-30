@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -52,14 +53,26 @@ public class FirebaseService {
     }
 
 
-    public void sendNotificationToAll(String title, String content) {
+    public void sendNotificationMessageToAll(String title, String content) {
         if (!content.isEmpty()) {
             List<FirebaseToken> tokens = findAll();
-            tokens.forEach(token -> sendNotification(title, content, token.getToken()));
+            tokens.forEach(token -> sendNotificationMessage(title, content, token.getToken()));
         }
     }
 
-    public void sendNotification(String title, String content, String token) {
+    public void sendDataMessageToAll(Map<String, String> data) {
+        List<FirebaseToken> tokens = findAll();
+        tokens.forEach(token -> sendDataMessage(data, token.getToken()));
+    }
+
+    /**
+     * Send notification to single device, notification is displayed in notification bar
+     *
+     * @param title   title of notification
+     * @param content content of notification
+     * @param token   token of device
+     */
+    public void sendNotificationMessage(String title, String content, String token) {
         Notification notification = Notification
                 .builder()
                 .setTitle(title)
@@ -72,6 +85,24 @@ public class FirebaseService {
                 .setNotification(notification)
                 .build();
 
+        try {
+            firebaseMessaging.send(message);
+        } catch (FirebaseMessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Send data message to single device, notification is not displayed in notification bar
+     *
+     * @param token token of device
+     */
+    public void sendDataMessage(Map<String, String> data, String token) {
+        Message message = Message
+                .builder()
+                .setToken(token)
+                .putAllData(data)
+                .build();
         try {
             firebaseMessaging.send(message);
         } catch (FirebaseMessagingException e) {
