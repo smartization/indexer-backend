@@ -36,6 +36,7 @@ public class ItemEntity {
     @ManyToOne
     private CategoryEntity category;
     private Integer notifyQuantity;
+    private boolean isDraft;
     public Integer incrementQuantity() {
         return ++this.quantity;
     }
