@@ -82,6 +82,12 @@ public class ItemDTO {
             example = "1"
     )
     private Integer notifyQuantity;
+    @Schema(
+            description = "Mark item as draft, this mean item has only barcode and resolved automatically name",
+            nullable = true,
+            example = "false"
+    )
+    private boolean isDraft;
 
     public static ItemDTO of(ItemEntity item) {
         ItemDTO dto = ItemDTO.builder()
@@ -93,6 +99,7 @@ public class ItemDTO {
                 .dueDate(item.getDueDate())
                 .quantity(item.getQuantity())
                 .notifyQuantity(item.getNotifyQuantity())
+                .isDraft(item.isDraft())
                 .build();
         // there could be items with no storage location set already
         if (item.getStoragePlace() != null) {
@@ -118,6 +125,7 @@ public class ItemDTO {
                 .dueDate(dueDate)
                 .quantity(quantity)
                 .notifyQuantity(notifyQuantity)
+                .isDraft(isDraft)
                 .build();
         if (storagePlace != null) {
             log.info("adding place to " + this);

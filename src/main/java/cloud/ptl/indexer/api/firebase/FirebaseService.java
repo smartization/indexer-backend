@@ -106,7 +106,7 @@ public class FirebaseService {
         try {
             firebaseMessaging.send(message);
         } catch (FirebaseMessagingException e) {
-            throw new RuntimeException(e);
+            log.error("Firebase throw exception: ", e.getMessage(), e);
         }
     }
 }

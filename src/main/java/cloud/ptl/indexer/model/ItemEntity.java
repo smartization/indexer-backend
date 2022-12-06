@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -36,6 +37,8 @@ public class ItemEntity {
     @ManyToOne
     private CategoryEntity category;
     private Integer notifyQuantity;
+    @ColumnDefault("false")
+    private boolean isDraft;
     public Integer incrementQuantity() {
         return ++this.quantity;
     }

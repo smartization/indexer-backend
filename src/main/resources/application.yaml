@@ -29,7 +29,7 @@ springdoc:
 firebase:
   token:
     remove:
-      days: 3d
+      days: 30d
 
 mail:
   address: ${MAIL_ADDRESS}
